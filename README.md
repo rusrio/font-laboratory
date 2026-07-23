@@ -1,5 +1,8 @@
 # Local Font Laboratory 🎨🔤
 
+<img width="1904" height="1064" alt="image" src="https://github.com/user-attachments/assets/02874357-d12d-440f-b6ed-ba1c85b171e0" />
+
+
 An interactive local playground for testing, previewing, and experimenting with web fonts and variable fonts collected from around the web.
 
 ## Features
