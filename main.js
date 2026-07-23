@@ -10,6 +10,8 @@ const sizeInput = document.getElementById('font-size');
 const sizeVal = document.getElementById('size-val');
 const lineHeightInput = document.getElementById('line-height');
 const lineHeightVal = document.getElementById('line-height-val');
+const letterSpacingInput = document.getElementById('letter-spacing');
+const letterSpacingVal = document.getElementById('letter-spacing-val');
 const copyBtn = document.getElementById('copy-css');
 const variableAxesContainer = document.getElementById('variable-axes');
 const previewArea = document.querySelector('.preview-area');
@@ -75,6 +77,7 @@ function init() {
 
   sizeInput.addEventListener('input', updateStyles);
   lineHeightInput.addEventListener('input', updateStyles);
+  letterSpacingInput.addEventListener('input', updateStyles);
   bgColorPicker.addEventListener('input', updateStyles);
   textColorPicker.addEventListener('input', updateStyles);
   copyBtn.addEventListener('click', copyCSS);
@@ -161,12 +164,14 @@ function renderVariableAxesMockup(filename) {
 function updateStyles() {
   sizeVal.textContent = sizeInput.value;
   lineHeightVal.textContent = lineHeightInput.value;
+  letterSpacingVal.textContent = letterSpacingInput.value;
 
   previewArea.style.background = bgColorPicker.value;
   previewText.style.color = textColorPicker.value;
   previewText.style.fontFamily = `"${currentFontFamily}", sans-serif`;
   previewText.style.fontSize = `${sizeInput.value}px`;
   previewText.style.lineHeight = lineHeightInput.value;
+  previewText.style.letterSpacing = `${letterSpacingInput.value}px`;
 
   if (Object.keys(currentFontAxes).length > 0) {
     const settings = Object.entries(currentFontAxes)
@@ -182,6 +187,7 @@ function copyCSS() {
   let css = `font-family: "${currentFontFamily}", sans-serif;\n`;
   css += `font-size: ${sizeInput.value}px;\n`;
   css += `line-height: ${lineHeightInput.value};\n`;
+  css += `letter-spacing: ${letterSpacingInput.value}px;\n`;
   css += `color: ${textColorPicker.value};\n`;
   css += `background-color: ${bgColorPicker.value};\n`;
   
