@@ -12,6 +12,9 @@ const lineHeightInput = document.getElementById('line-height');
 const lineHeightVal = document.getElementById('line-height-val');
 const copyBtn = document.getElementById('copy-css');
 const variableAxesContainer = document.getElementById('variable-axes');
+const previewArea = document.querySelector('.preview-area');
+const bgColorPicker = document.getElementById('bg-color-picker');
+const textColorPicker = document.getElementById('text-color-picker');
 
 // State
 let loadedFonts = new Map();
@@ -72,6 +75,8 @@ function init() {
 
   sizeInput.addEventListener('input', updateStyles);
   lineHeightInput.addEventListener('input', updateStyles);
+  bgColorPicker.addEventListener('input', updateStyles);
+  textColorPicker.addEventListener('input', updateStyles);
   copyBtn.addEventListener('click', copyCSS);
 
   // Initialize with first family
@@ -157,6 +162,8 @@ function updateStyles() {
   sizeVal.textContent = sizeInput.value;
   lineHeightVal.textContent = lineHeightInput.value;
 
+  previewArea.style.background = bgColorPicker.value;
+  previewText.style.color = textColorPicker.value;
   previewText.style.fontFamily = `"${currentFontFamily}", sans-serif`;
   previewText.style.fontSize = `${sizeInput.value}px`;
   previewText.style.lineHeight = lineHeightInput.value;
@@ -175,6 +182,8 @@ function copyCSS() {
   let css = `font-family: "${currentFontFamily}", sans-serif;\n`;
   css += `font-size: ${sizeInput.value}px;\n`;
   css += `line-height: ${lineHeightInput.value};\n`;
+  css += `color: ${textColorPicker.value};\n`;
+  css += `background-color: ${bgColorPicker.value};\n`;
   
   if (Object.keys(currentFontAxes).length > 0) {
     const settings = Object.entries(currentFontAxes)
