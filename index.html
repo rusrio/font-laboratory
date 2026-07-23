@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Font Laboratory</title>
+</head>
+<body>
+  <main class="app-container">
+    <!-- Sidebar / Controls -->
+    <aside class="sidebar">
+      <header>
+        <h1>Font Lab</h1>
+        <p>Interactive typography playground</p>
+      </header>
+      
+      <div class="control-group">
+        <label for="font-select">Select Font</label>
+        <select id="font-select">
+          <option value="">Loading fonts...</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="font-size">Size (<span id="size-val">48</span>px)</label>
+        <input type="range" id="font-size" min="12" max="200" value="48">
+      </div>
+
+      <div class="control-group">
+        <label for="line-height">Line Height (<span id="line-height-val">1.2</span>)</label>
+        <input type="range" id="line-height" min="0.8" max="2.5" step="0.1" value="1.2">
+      </div>
+
+      <!-- Variable axes controls will be injected here -->
+      <div id="variable-axes" class="variable-axes-container"></div>
+
+      <div class="export-section">
+        <button id="copy-css" class="btn primary">Copy CSS</button>
+      </div>
+    </aside>
+
+    <!-- Preview Area -->
+    <section class="preview-area">
+      <textarea id="preview-text" class="preview-text" spellcheck="false" placeholder="Type here to preview font...">The quick brown fox jumps over the lazy dog.</textarea>
+    </section>
+  </main>
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
