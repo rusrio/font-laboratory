@@ -44,8 +44,8 @@ An interactive local playground for testing, previewing, and experimenting with 
 
 To add new fonts to your lab:
 
-1. Drop your font folder (e.g. `Nohemi/`) or raw font files anywhere in the project directory.
-2. Refresh your browser page. The new fonts will automatically appear in the font selector menu.
+1. Drop your font folder (e.g. `fonts/Nohemi/`) into the `fonts/` directory.
+2. Refresh your browser page. The new family and its variants will automatically appear in the selectors.
 
 ## Tech Stack
 
