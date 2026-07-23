@@ -124,7 +124,7 @@ select:focus {
 }
 
 .variant-list {
-  max-height: 160px;
+  max-height: 220px;
   overflow-y: auto;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
@@ -132,8 +132,8 @@ select:focus {
   display: flex;
   flex-direction: column;
   outline: none;
-  padding: 0.25rem;
-  gap: 0.125rem;
+  padding: 0.35rem;
+  gap: 0.35rem;
 }
 
 .variant-list:focus {
@@ -141,16 +141,16 @@ select:focus {
 }
 
 .variant-item {
-  padding: 0.45rem 0.65rem;
+  padding: 0.6rem 0.75rem;
   border-radius: 0.375rem;
   font-size: 0.8125rem;
+  line-height: 1.4;
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
+  flex-shrink: 0;
 }
 
 .variant-item:hover,

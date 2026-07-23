@@ -35,7 +35,11 @@ Object.entries(fontModules).forEach(([path, url]) => {
   if (parts.length >= 3 && parts[0] === 'fonts') {
     const family = parts[1];
     const filename = parts[parts.length - 1];
-    const label = parts.slice(2).join(' › ');
+    let subParts = parts.slice(2);
+    if (subParts.length > 1 && subParts[0].toLowerCase() === family.toLowerCase()) {
+      subParts = subParts.slice(1);
+    }
+    const label = subParts.join(' › ');
 
     if (!fontFamilies[family]) {
       fontFamilies[family] = [];
