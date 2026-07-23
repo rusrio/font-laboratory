@@ -4,14 +4,18 @@ import './style.css';
 const fontModules = import.meta.glob('/fonts/**/*.{ttf,otf,woff,woff2}', { eager: true, query: '?url', import: 'default' });
 
 const familySelect = document.getElementById('family-select');
-const variantSelect = document.getElementById('variant-select');
+const variantList = document.getElementById('variant-list');
 const previewText = document.getElementById('preview-text');
+
 const sizeInput = document.getElementById('font-size');
-const sizeVal = document.getElementById('size-val');
+const sizeNum = document.getElementById('size-num');
+
 const lineHeightInput = document.getElementById('line-height');
-const lineHeightVal = document.getElementById('line-height-val');
+const lineHeightNum = document.getElementById('line-height-num');
+
 const letterSpacingInput = document.getElementById('letter-spacing');
-const letterSpacingVal = document.getElementById('letter-spacing-val');
+const letterSpacingNum = document.getElementById('letter-spacing-num');
+
 const copyBtn = document.getElementById('copy-css');
 const variableAxesContainer = document.getElementById('variable-axes');
 const previewArea = document.querySelector('.preview-area');
@@ -23,15 +27,14 @@ let loadedFonts = new Map();
 let currentFontFamily = '';
 let currentFontAxes = {};
 let fontFamilies = {};
+let currentVariantIndex = 0;
 
 // Group fonts by family (first folder inside /fonts/)
 Object.entries(fontModules).forEach(([path, url]) => {
   const parts = path.split('/').filter(Boolean);
-  // Expected path format: ['fonts', 'FamilyName', ...]
   if (parts.length >= 3 && parts[0] === 'fonts') {
     const family = parts[1];
     const filename = parts[parts.length - 1];
-    // Create readable label from relative path inside family folder
     const label = parts.slice(2).join(' › ');
 
     if (!fontFamilies[family]) {
@@ -52,7 +55,7 @@ function init() {
 
   if (families.length === 0) {
     familySelect.innerHTML = '<option value="">No fonts found in /fonts</option>';
-    variantSelect.innerHTML = '<option value="">-</option>';
+    variantList.innerHTML = '<div class="variant-item">-</div>';
     return;
   }
 
@@ -67,38 +70,104 @@ function init() {
 
   // Event Listeners
   familySelect.addEventListener('change', (e) => onFamilyChange(e.target.value));
-  variantSelect.addEventListener('change', (e) => {
-    const family = familySelect.value;
-    const selectedVariantIndex = e.target.value;
-    if (fontFamilies[family] && fontFamilies[family][selectedVariantIndex]) {
-      loadFont(fontFamilies[family][selectedVariantIndex]);
-    }
-  });
 
-  sizeInput.addEventListener('input', updateStyles);
-  lineHeightInput.addEventListener('input', updateStyles);
-  letterSpacingInput.addEventListener('input', updateStyles);
+  // Bidirectional binding between range sliders and numeric inputs
+  bindSliderAndNum(sizeInput, sizeNum);
+  bindSliderAndNum(lineHeightInput, lineHeightNum);
+  bindSliderAndNum(letterSpacingInput, letterSpacingNum);
+
   bgColorPicker.addEventListener('input', updateStyles);
   textColorPicker.addEventListener('input', updateStyles);
   copyBtn.addEventListener('click', copyCSS);
+
+  // Keyboard navigation for variant list (ArrowUp / ArrowDown)
+  variantList.addEventListener('keydown', (e) => {
+    const family = familySelect.value;
+    const variants = fontFamilies[family] || [];
+    if (variants.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nextIndex = Math.min(currentVariantIndex + 1, variants.length - 1);
+      selectVariantItem(nextIndex, true);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prevIndex = Math.max(currentVariantIndex - 1, 0);
+      selectVariantItem(prevIndex, true);
+    }
+  });
 
   // Initialize with first family
   onFamilyChange(families[0]);
 }
 
-function onFamilyChange(family) {
-  const variants = fontFamilies[family] || [];
-  variantSelect.innerHTML = '';
-
-  variants.forEach((variant, index) => {
-    const option = document.createElement('option');
-    option.value = index;
-    option.textContent = variant.label;
-    variantSelect.appendChild(option);
+function bindSliderAndNum(sliderEl, numEl) {
+  sliderEl.addEventListener('input', () => {
+    numEl.value = sliderEl.value;
+    updateStyles();
   });
 
-  if (variants.length > 0) {
-    loadFont(variants[0]);
+  numEl.addEventListener('input', () => {
+    sliderEl.value = numEl.value;
+    updateStyles();
+  });
+}
+
+function onFamilyChange(family) {
+  const variants = fontFamilies[family] || [];
+  variantList.innerHTML = '';
+  currentVariantIndex = 0;
+
+  if (variants.length === 0) {
+    variantList.innerHTML = '<div class="variant-item">No variants found</div>';
+    return;
+  }
+
+  variants.forEach((variant, index) => {
+    const item = document.createElement('div');
+    item.className = 'variant-item' + (index === 0 ? ' selected' : '');
+    item.textContent = variant.label;
+    item.dataset.index = index;
+
+    // Hover event -> Instant preview!
+    item.addEventListener('mouseenter', () => {
+      selectVariantItem(index, false);
+    });
+
+    // Click event -> Confirm selection
+    item.addEventListener('click', () => {
+      selectVariantItem(index, true);
+    });
+
+    variantList.appendChild(item);
+  });
+
+  // When mouse leaves the list container, revert preview to currently selected item
+  variantList.addEventListener('mouseleave', () => {
+    selectVariantItem(currentVariantIndex, false);
+  });
+
+  selectVariantItem(0, true);
+}
+
+function selectVariantItem(index, setAsActive = true) {
+  const items = variantList.querySelectorAll('.variant-item');
+  items.forEach((el, idx) => {
+    if (idx === index) {
+      el.classList.add('selected');
+      el.scrollIntoView({ block: 'nearest' });
+    } else {
+      el.classList.remove('selected');
+    }
+  });
+
+  const family = familySelect.value;
+  const variants = fontFamilies[family] || [];
+  if (variants[index]) {
+    if (setAsActive) {
+      currentVariantIndex = index;
+    }
+    loadFont(variants[index]);
   }
 }
 
@@ -142,17 +211,28 @@ function renderVariableAxesMockup(filename) {
       const group = document.createElement('div');
       group.className = 'control-group';
       group.innerHTML = `
-        <label for="axis-${axis.id}">${axis.name} (<span id="val-${axis.id}">${axis.value}</span>)</label>
+        <label for="axis-${axis.id}">
+          <span>${axis.name}</span>
+          <div class="num-wrapper">
+            <input type="number" id="num-${axis.id}" min="${axis.min}" max="${axis.max}" value="${axis.value}" class="num-input">
+          </div>
+        </label>
         <input type="range" id="axis-${axis.id}" data-axis="${axis.id}" min="${axis.min}" max="${axis.max}" value="${axis.value}">
       `;
       variableAxesContainer.appendChild(group);
 
-      const input = group.querySelector('input');
-      const valDisplay = group.querySelector(`#val-${axis.id}`);
+      const sliderInput = group.querySelector(`input[type="range"]`);
+      const numInput = group.querySelector(`input[type="number"]`);
       
-      input.addEventListener('input', (e) => {
-        valDisplay.textContent = e.target.value;
-        currentFontAxes[axis.id] = e.target.value;
+      sliderInput.addEventListener('input', () => {
+        numInput.value = sliderInput.value;
+        currentFontAxes[axis.id] = sliderInput.value;
+        updateStyles();
+      });
+
+      numInput.addEventListener('input', () => {
+        sliderInput.value = numInput.value;
+        currentFontAxes[axis.id] = numInput.value;
         updateStyles();
       });
     });
@@ -162,10 +242,6 @@ function renderVariableAxesMockup(filename) {
 }
 
 function updateStyles() {
-  sizeVal.textContent = sizeInput.value;
-  lineHeightVal.textContent = lineHeightInput.value;
-  letterSpacingVal.textContent = letterSpacingInput.value;
-
   previewArea.style.background = bgColorPicker.value;
   previewText.style.color = textColorPicker.value;
   previewText.style.fontFamily = `"${currentFontFamily}", sans-serif`;
