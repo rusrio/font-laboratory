@@ -268,8 +268,6 @@ function copyCSS() {
   css += `font-size: ${sizeInput.value}px;\n`;
   css += `line-height: ${lineHeightInput.value};\n`;
   css += `letter-spacing: ${letterSpacingInput.value}px;\n`;
-  css += `color: ${textColorPicker.value};\n`;
-  css += `background-color: ${bgColorPicker.value};\n`;
   
   if (Object.keys(currentFontAxes).length > 0) {
     const settings = Object.entries(currentFontAxes)
