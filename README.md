@@ -1,6 +1,7 @@
 # Local Font Laboratory
 
-<img width="1904" height="1064" alt="image" src="https://github.com/user-attachments/assets/02874357-d12d-440f-b6ed-ba1c85b171e0" />
+<img width="1904" height="1064" alt="image" src="https://github.com/user-attachments/assets/8df69fb0-1c5a-4e08-b9c6-3e592c230d10" />
+
 
 A web-based local playground to preview and test web fonts (`.ttf`, `.otf`, `.woff`, `.woff2`).
 
